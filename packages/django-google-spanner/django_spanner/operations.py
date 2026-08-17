@@ -759,3 +759,8 @@ class DatabaseOperations(BaseDatabaseOperations):
         Return the SQL for rolling back to a savepoint.
         """
         return "SELECT 1"
+
+    def compile_json_path(self, key_transforms, fallback_to_null=False):
+        # Spanner specific JSON path formatting
+        path = "['%s']" % "']['".join(key_transforms)
+        return path

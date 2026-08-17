@@ -23,7 +23,7 @@ release_status = "Development Status :: 5 - Production/Stable"
 dependencies = [
     "sqlparse >= 0.3.0",
     "google-cloud-spanner >= 3.13.0",
-    "django >= 5.2, < 6.0",
+    "django >= 4.2, < 6.1",
 ]
 extras = {
     "tracing": [
