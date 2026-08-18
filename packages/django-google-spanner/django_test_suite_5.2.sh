@@ -1,26 +1,24 @@
-#!/bin/bash
+#!/bin/sh
 
 # Copyright (c) 2020 Google LLC. All rights reserved.
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
-set -x
+set -x pipefail
 
 # Disable buffering, so that the logs stream through.
 export PYTHONUNBUFFERED=1
 
-export DJANGO_TESTS_DIR="${DJANGO_TESTS_DIR:-django_tests_dir_5.2}"
+export DJANGO_TESTS_DIR="django_tests_dir"
 mkdir -p $DJANGO_TESTS_DIR
 
 pip3 install .
 # Clone Django 5.2 (assuming stable/5.2.x exists, update if needed)
 if [ ! -d "$DJANGO_TESTS_DIR/django" ]; then
     git clone --depth 1 --single-branch --branch "stable/5.2.x" https://github.com/django/django.git $DJANGO_TESTS_DIR/django
-else
-    (cd $DJANGO_TESTS_DIR/django && git fetch --depth 1 origin stable/5.2.x:stable/5.2.x 2>/dev/null || true && git checkout stable/5.2.x)
 fi
 
-(cd $DJANGO_TESTS_DIR/django && pip3 install -e . && (pip3 install -r tests/requirements/py3.txt || true))
+cd $DJANGO_TESTS_DIR/django && pip3 install -e . && pip3 install -r tests/requirements/py3.txt; cd ../../
 pip3 install google-cloud-testutils
 
 # Only add the current directory (project root) to PYTHONPATH so django_spanner is importable.
