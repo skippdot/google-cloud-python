@@ -50,6 +50,7 @@ class DatabaseFeatures(BaseDatabaseFeatures):
         supports_foreign_keys = True
     can_create_inline_fk = False
     supports_ignore_conflicts = False
+    supports_over_clause = False
     supports_partial_indexes = False
     supports_regex_backreferencing = False
     supports_select_for_update_with_limit = False
