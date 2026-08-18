@@ -28,8 +28,6 @@ if os.getenv(
 
     config = f"{client.project_name}/instanceConfigs/regional-us-central1"
 
-    instance_id = os.getenv("SPANNER_TEST_INSTANCE", "google-cloud-django-backend-tests")
-    instance = client.instance(instance_id, config)
-    if not instance.exists():
-        created_op = instance.create()
-        created_op.result(30)  # block until completion
+    instance = client.instance("google-cloud-django-backend-tests", config)
+    created_op = instance.create()
+    created_op.result(30)  # block until completion
