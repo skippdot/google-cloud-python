@@ -617,19 +617,13 @@ class DatabaseSchemaEditor(BaseDatabaseSchemaEditor):
         if not include:
             return ""
         pk_names = {model._meta.pk.name, model._meta.pk.column}
-        include_fields = [
-            field
-            for field in self._index_include_fields(model, include)
-            if (field.column if hasattr(field, "column") else field) not in pk_names
-            and (field.name if hasattr(field, "name") else field) not in pk_names
-        ]
-        if not include_fields:
+        filtered_include = []
+        for field in include:
+            col_name = field.column if hasattr(field, "column") else str(field)
+            name = field.name if hasattr(field, "name") else str(field)
+            if col_name not in pk_names and name not in pk_names:
+                filtered_include.append(col_name)
+        if not filtered_include:
             return ""
-        columns = [
-            self.quote_name(
-                field.column if hasattr(field, "column") else field
-            )
-            for field in include_fields
-        ]
+        columns = [self.quote_name(col) for col in filtered_include]
         return self.sql_create_index_include % {"columns": ", ".join(columns)}
-

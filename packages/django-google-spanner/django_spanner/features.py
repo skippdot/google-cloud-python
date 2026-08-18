@@ -57,12 +57,15 @@ class DatabaseFeatures(BaseDatabaseFeatures):
     supports_sequence_reset = False
     supports_timezones = False
     supports_transactions = True
-    supports_column_check_constraints = True
-    supports_table_check_constraints = True
     if USE_EMULATOR:
         # Emulator does not support json.
         supports_json_field = False
+        # Emulator does not support check constraints.
+        supports_column_check_constraints = False
+        supports_table_check_constraints = False
     else:
+        supports_column_check_constraints = True
+        supports_table_check_constraints = True
         supports_json_field = True
     supports_primitives_in_json_field = False
     supports_composite_primary_keys = True
