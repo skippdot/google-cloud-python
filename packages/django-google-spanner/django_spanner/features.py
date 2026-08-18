@@ -217,6 +217,9 @@ class DatabaseFeatures(BaseDatabaseFeatures):
         "many_to_one_null.tests.ManyToOneNullTests.test_set_clear_non_bulk",
         "many_to_one_null.tests.ManyToOneNullTests.test_unsaved",
         "foreign_object.tests.MultiColumnFKTests.test_prefetch_foreignobject_reverse",
+        # Indexes tests
+        "indexes.tests.CoveringIndexTests.test_covering_index",
+        "indexes.tests.CoveringIndexTests.test_covering_partial_index",
         # Admin ChangeList tests
         "admin_changelist.tests.ChangeListTests.test_custom_lookup_in_search_fields",
         "admin_changelist.tests.ChangeListTests.test_deterministic_order_for_model_ordered_by_its_manager",
