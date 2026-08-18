@@ -43,6 +43,13 @@ class DatabaseOperations(BaseDatabaseOperations):
     cast_char_field_without_max_length = "STRING"
     compiler_module = "django_spanner.compiler"
 
+    def returning_columns(self, fields):
+        if not fields:
+            return "", ()
+        columns = [self.quote_name(field.column) for field in fields]
+        return "THEN RETURN %s" % ", ".join(columns), ()
+
+
     # Django's lookup names that require a different name in Spanner's
     # EXTRACT() function.
     # https://cloud.google.com/spanner/docs/functions-and-operators#extract
@@ -759,8 +766,3 @@ class DatabaseOperations(BaseDatabaseOperations):
         Return the SQL for rolling back to a savepoint.
         """
         return "SELECT 1"
-
-    def compile_json_path(self, key_transforms, fallback_to_null=False):
-        # Spanner specific JSON path formatting
-        path = "['%s']" % "']['".join(key_transforms)
-        return path

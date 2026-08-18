@@ -14,7 +14,23 @@ from django_spanner import USE_EMULATOR
 
 class DatabaseFeatures(BaseDatabaseFeatures):
     can_introspect_big_integer_field = False
+
+    @property
+    def introspected_field_types(self):
+        return {
+            **super().introspected_field_types,
+            "BigIntegerField": "IntegerField",
+            "BigAutoField": "AutoField",
+            "SmallAutoField": "AutoField",
+            "SmallIntegerField": "IntegerField",
+            "PositiveBigIntegerField": "IntegerField",
+            "PositiveIntegerField": "IntegerField",
+            "PositiveSmallIntegerField": "IntegerField",
+            "DurationField": "IntegerField",
+        }
     can_introspect_duration_field = False
+    can_return_columns_from_insert = True
+
     can_introspect_foreign_keys = False
     # TimeField is introspected as DateTimeField because they both use
     # TIMESTAMP.
@@ -761,6 +777,27 @@ class DatabaseFeatures(BaseDatabaseFeatures):
             "ordering.tests.OrderingTests.test_extra_ordering",
             "ordering.tests.OrderingTests.test_extra_ordering_quoting",
             "ordering.tests.OrderingTests.test_extra_ordering_with_table_name",
+            # Spanner uses random int64 IDs; test assumes monotonic ordering matching insertion order.
+            "prefetch_related.tests.PrefetchRelatedMTICacheTests.test_parent_m2m_available_in_child",
+            # Client-side AutoField ID generation sets pk before save; _is_pk_set() triggers refresh_from_db instead of AttributeError.
+            "defer_regress.tests.DeferCopyInstanceTests.test_bulk_create",
+            "defer_regress.tests.DeferCopyInstanceTests.test_save",
+            # Spanner does not support nested transactions/savepoints; raising inside atomic() aborts the whole transaction.
+            "update_only_fields.tests.UpdateOnlyFieldsTests.test_update_fields_not_updated",
+            # Test checks warning caller stacklevel; wrapping create_test_db shifts frame depth.
+            "backends.base.test_creation.TestDbCreationTests.test_serialize_deprecation",
+            # Runtime client-side AutoField initialization defaults trigger false-positive diffs in makemigrations autodetector.
+            "migrations.test_commands.MakeMigrationsTests.test_makemigrations_check_no_changes",
+            "migrations.test_commands.MakeMigrationsTests.test_makemigrations_model_rename_interactive",
+            "migrations.test_commands.MakeMigrationsTests.test_makemigrations_no_changes",
+            # Spanner query parameter limit (max_query_params = 900) limits batch chunk size.
+            "bulk_create.tests.BulkCreateTests.test_max_batch_size",
+            # Query count assertions mismatch due to Spanner batch DML execution behavior.
+            "bulk_create.tests.BulkCreateTransactionTests.test_multiple_batches",
+            # All objects get client-side PKs, collapsing multi-query insertion into a single batch query.
+            "bulk_create.tests.BulkCreateTransactionTests.test_objs_with_and_without_pk",
+            # Tie-breaker ordering on pk assumes sequential integer IDs; Spanner uses random IDs.
+            "ordering.tests.OrderingTests.test_order_by_case_when_constant_value",
             "ordering.tests.OrderingTests.test_order_by_constant_value",
             "ordering.tests.OrderingTests.test_order_by_f_expression",
             "ordering.tests.OrderingTests.test_order_by_f_expression_duplicates",

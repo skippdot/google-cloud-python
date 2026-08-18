@@ -74,7 +74,7 @@ def autofield_init(self, *args, **kwargs):
             == "true"
         ):
             self.default = gen_rand_int64
-            self.db_returning = False
+            self.db_returning = True
             self.validators = []
             break
 

@@ -1,10 +1,11 @@
-#!/bin/sh
+#!/bin/bash
 
 # Copyright (c) 2020 Google LLC. All rights reserved.
 # Use of this source code is governed by a BSD-style
 # license that can be found in the LICENSE file.
 
-set -x pipefail
+set -xe
+set -o pipefail
 
 # Disable buffering, so that the logs stream through.
 export PYTHONUNBUFFERED=1
@@ -60,7 +61,6 @@ SECRET_KEY = 'spanner_tests_secret_key'
 PASSWORD_HASHERS = [
     'django.contrib.auth.hashers.MD5PasswordHasher',
 ]
-DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 INSTALLED_APPS = [
     'django.contrib.admin',
