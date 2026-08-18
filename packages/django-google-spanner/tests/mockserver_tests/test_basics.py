@@ -25,7 +25,6 @@ from tests.mockserver_tests.mock_server_test_base import (
     add_select1_result,
     add_singer_query_result,
     add_single_result,
-    add_update_count,
 )
 from tests.mockserver_tests.models import Singer
 from tests.settings import DATABASES
