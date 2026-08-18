@@ -57,20 +57,20 @@ class DatabaseFeatures(BaseDatabaseFeatures):
     supports_sequence_reset = False
     supports_timezones = False
     supports_transactions = True
+    supports_column_check_constraints = True
+    supports_table_check_constraints = True
     if USE_EMULATOR:
         # Emulator does not support json.
         supports_json_field = False
-        # Emulator does not support check constrints.
-        supports_column_check_constraints = False
-        supports_table_check_constraints = False
     else:
-        supports_column_check_constraints = True
-        supports_table_check_constraints = True
         supports_json_field = True
     supports_primitives_in_json_field = False
     supports_composite_primary_keys = True
     # Spanner does not support order by null modifiers.
     supports_order_by_nulls_modifier = False
+    order_by_nulls_first = True
+    supports_any_value = True
+    supports_covering_indexes = True
     # Spanner does not support SELECTing an arbitrary expression that also
     # appears in the GROUP BY clause.
     supports_subqueries_in_group_by = False

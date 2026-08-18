@@ -35,8 +35,9 @@ class DatabaseSchemaEditor(BaseDatabaseSchemaEditor):
     # Spanner doesn't support partial indexes. This string omits the
     # %(condition)s placeholder so that partial indexes are ignored.
     sql_create_index = (
-        "CREATE INDEX %(name)s ON %(table)s%(using)s (%(columns)s)%(extra)s"
+        "CREATE INDEX %(name)s ON %(table)s%(using)s (%(columns)s)%(include)s%(extra)s"
     )
+    sql_create_index_include = " STORING (%(columns)s)"
     sql_create_unique = (
         "CREATE UNIQUE NULL_FILTERED INDEX %(name)s ON %(table)s (%(columns)s)"
     )
@@ -611,3 +612,24 @@ class DatabaseSchemaEditor(BaseDatabaseSchemaEditor):
         if getattr(field, "db_default", None) is not None:
             return False
         return True
+
+    def _index_include_sql(self, model, include):
+        if not include:
+            return ""
+        pk_names = {model._meta.pk.name, model._meta.pk.column}
+        include_fields = [
+            field
+            for field in self._index_include_fields(model, include)
+            if (field.column if hasattr(field, "column") else field) not in pk_names
+            and (field.name if hasattr(field, "name") else field) not in pk_names
+        ]
+        if not include_fields:
+            return ""
+        columns = [
+            self.quote_name(
+                field.column if hasattr(field, "column") else field
+            )
+            for field in include_fields
+        ]
+        return self.sql_create_index_include % {"columns": ", ".join(columns)}
+
