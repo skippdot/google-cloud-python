@@ -71,7 +71,6 @@ class DatabaseFeatures(BaseDatabaseFeatures):
     supports_composite_primary_keys = True
     # Spanner does not support order by null modifiers.
     supports_order_by_nulls_modifier = False
-    order_by_nulls_first = True
     supports_any_value = True
     supports_covering_indexes = True
     # Spanner does not support SELECTing an arbitrary expression that also
