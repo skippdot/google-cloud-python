@@ -37,20 +37,14 @@ class DatabaseFeatures(BaseDatabaseFeatures):
     # TIMESTAMP.
     can_introspect_time_field = False
     closed_cursor_error_class = InterfaceError
-    # Spanner uses REGEXP_CONTAINS which is case-sensitive.
-    has_case_insensitive_like = False
-    # https://cloud.google.com/spanner/quotas#query_limits
     max_query_params = 900
     # Spanner does not support parameterized defaults in DDL
     requires_literal_defaults = True
 
     if os.environ.get("RUNNING_SPANNER_BACKEND_TESTS") == "1":
         supports_foreign_keys = False
-    else:
-        supports_foreign_keys = True
     can_create_inline_fk = False
     supports_ignore_conflicts = False
-    supports_over_clause = False
     supports_partial_indexes = False
     supports_regex_backreferencing = False
     supports_select_for_update_with_limit = False
@@ -63,10 +57,6 @@ class DatabaseFeatures(BaseDatabaseFeatures):
         # Emulator does not support check constraints.
         supports_column_check_constraints = False
         supports_table_check_constraints = False
-    else:
-        supports_column_check_constraints = True
-        supports_table_check_constraints = True
-        supports_json_field = True
     supports_primitives_in_json_field = False
     supports_composite_primary_keys = True
     # Spanner does not support order by null modifiers.
@@ -78,7 +68,6 @@ class DatabaseFeatures(BaseDatabaseFeatures):
     supports_subqueries_in_group_by = False
     uses_savepoints = False  # Spanner does not support savepoints.
     can_rollback_tests = False  # Spanner savepoints are no-ops; rely on flush.
-    supports_aggregate_filter_clause = False
     # Spanner does not support expression indexes
     # example: CREATE INDEX index_name ON table (LOWER(column_name))
     supports_expression_indexes = False
