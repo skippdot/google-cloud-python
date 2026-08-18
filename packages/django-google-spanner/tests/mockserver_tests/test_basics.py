@@ -81,7 +81,8 @@ class TestBasics(MockServerTestBase):
         add_update_count(
             "INSERT INTO tests_singer "
             "(id, first_name, last_name) "
-            "VALUES (@a0, @a1, @a2)",
+            "VALUES (@a0, @a1, @a2) "
+            "THEN RETURN id",
             1,
         )
         singer = Singer(first_name="test", last_name="test")
@@ -113,7 +114,8 @@ class TestBasics(MockServerTestBase):
             add_update_count(
                 "INSERT INTO tests_localsinger "
                 "(first_name, last_name) "
-                "VALUES (@a0, @a1)",
+                "VALUES (@a0, @a1) "
+                "THEN RETURN id",
                 1,
             )
             singer = LocalSinger(first_name="test", last_name="test")

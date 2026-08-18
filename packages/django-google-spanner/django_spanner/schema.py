@@ -123,13 +123,19 @@ class DatabaseSchemaEditor(BaseDatabaseSchemaEditor):
         # created afterwards, like geometry fields with some backends)
         for fields in model._meta.unique_together:
             columns = [model._meta.get_field(field) for field in fields]
-            self.deferred_sql.append(self._create_unique_sql(model, columns))
+            sql = self._create_unique_sql(model, columns)
+            if sql:
+                self.deferred_sql.append(sql)
         constraints = []
         for constraint in model._meta.constraints:
             if isinstance(constraint, django.db.models.UniqueConstraint):
-                self.deferred_sql.append(constraint.create_sql(model, self))
+                sql = constraint.create_sql(model, self)
+                if sql:
+                    self.deferred_sql.append(sql)
             else:
-                constraints.append(constraint.constraint_sql(model, self))
+                c_sql = constraint.constraint_sql(model, self)
+                if c_sql:
+                    constraints.append(c_sql)
         if model._meta.pk.is_relation:
             pk_column = self.quote_name(model._meta.pk.column)
         else:
