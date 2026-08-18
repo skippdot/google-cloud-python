@@ -28,6 +28,7 @@ class DatabaseFeatures(BaseDatabaseFeatures):
             "PositiveSmallIntegerField": "IntegerField",
             "DurationField": "IntegerField",
         }
+
     can_introspect_duration_field = False
     can_return_columns_from_insert = True
 
