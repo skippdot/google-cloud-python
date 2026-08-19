@@ -12,12 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 language: python
-version: v0.36.0
+version: v0.38.0
 repo: googleapis/google-cloud-python
 sources:
   googleapis:
-    commit: 240b58fe7058f6fff77cba02f51d600170b6c421
-    sha256: ca03f2c93b8f1e92fd75c87b2568992c96a2ecc37fde750c5bf83129fa17b407
+    commit: 8856eed71a9cb2b9829d2617ee57fe2d8871a691
+    sha256: 54104af35306b605a97f7d1b98b9b96f4a507cd18322b44d81f62eca17969b3a
 tools:
   pip:
     - name: black
@@ -76,10 +76,6 @@ default:
       - docs/summary_overview.md
     library_type: GAPIC_AUTO
 libraries:
-  - name: bigframes
-    version: 2.48.0
-    python:
-      library_type: INTEGRATION
   - name: bigquery-magics
     version: 0.15.1
     python:
@@ -656,7 +652,7 @@ libraries:
       metadata_name_override: bigquerystorage
       default_version: v1
   - name: google-cloud-bigtable
-    version: 2.41.0
+    version: 2.42.0
     apis:
       - path: google/bigtable/v2
       - path: google/bigtable/admin/v2
