@@ -4,6 +4,13 @@
 
 [1]: https://pypi.org/project/google-cloud-spanner/#history
 
+## [3.69.2](https://github.com/googleapis/google-cloud-python/compare/google-cloud-spanner-v3.69.1...google-cloud-spanner-v3.69.2) (2026-08-19)
+
+
+### Bug Fixes
+
+* **spanner:** buffer returned rows in autocommit DML statements ([#18152](https://github.com/googleapis/google-cloud-python/issues/18152)) ([7f8a552](https://github.com/googleapis/google-cloud-python/commit/7f8a552e3201dcb75ca8f4b8861fa940d95ecd2f))
+
 ## [3.69.1](https://github.com/googleapis/google-cloud-python/compare/google-cloud-spanner-v3.69.0...google-cloud-spanner-v3.69.1) (2026-08-06)
 
 
