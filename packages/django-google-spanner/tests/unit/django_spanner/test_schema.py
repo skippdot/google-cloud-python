@@ -464,3 +464,41 @@ class TestUtils(SpannerSimpleTestClass):
         field = AutoField(name="field_name")
         assert gen_rand_int64 != field.default
         del connections.settings["default"]["RANDOM_ID_GENERATION_ENABLED"]
+
+    def test_index_include_sql(self):
+        """Tests _index_include_sql with normal fields."""
+        schema_editor = DatabaseSchemaEditor(self.connection)
+        sql = schema_editor._index_include_sql(Author, ["name", "last_name"])
+        self.assertEqual(sql, " STORING (name, last_name)")
+
+    def test_index_include_sql_filters_primary_key(self):
+        """Tests _index_include_sql filters out primary key fields."""
+        schema_editor = DatabaseSchemaEditor(self.connection)
+        sql = schema_editor._index_include_sql(Author, ["id", "name"])
+        self.assertEqual(sql, " STORING (name)")
+
+    def test_index_include_sql_all_pk_returns_empty(self):
+        """Tests _index_include_sql returns empty string when only PK is included."""
+        schema_editor = DatabaseSchemaEditor(self.connection)
+        sql = schema_editor._index_include_sql(Author, ["id"])
+        self.assertEqual(sql, "")
+
+    def test_index_include_sql_empty(self):
+        """Tests _index_include_sql returns empty string when include is empty."""
+        schema_editor = DatabaseSchemaEditor(self.connection)
+        self.assertEqual(schema_editor._index_include_sql(Author, []), "")
+        self.assertEqual(schema_editor._index_include_sql(Author, None), "")
+
+    def test_skip_default_generated_and_db_default(self):
+        """Tests skip_default for generated and db_default fields."""
+        schema_editor = DatabaseSchemaEditor(self.connection)
+        generated_field = mock.MagicMock(generated=True)
+        self.assertFalse(schema_editor.skip_default(generated_field))
+
+        db_default_field = mock.MagicMock(
+            generated=False, db_default="CURRENT_TIMESTAMP()"
+        )
+        self.assertFalse(schema_editor.skip_default(db_default_field))
+
+        normal_field = mock.MagicMock(generated=False, db_default=None)
+        self.assertTrue(schema_editor.skip_default(normal_field))
