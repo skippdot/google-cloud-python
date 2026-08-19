@@ -38,6 +38,7 @@ class DatabaseFeatures(BaseDatabaseFeatures):
     # TIMESTAMP.
     can_introspect_time_field = False
     closed_cursor_error_class = InterfaceError
+    # https://cloud.google.com/spanner/quotas#query_limits
     max_query_params = 900
     # Spanner does not support parameterized defaults in DDL
     requires_literal_defaults = True
