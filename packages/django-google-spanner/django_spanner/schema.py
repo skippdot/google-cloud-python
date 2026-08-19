@@ -617,13 +617,16 @@ class DatabaseSchemaEditor(BaseDatabaseSchemaEditor):
         if not include:
             return ""
         pk_names = {model._meta.pk.name, model._meta.pk.column}
-        filtered_include = []
         for field in include:
             col_name = field.column if hasattr(field, "column") else str(field)
             name = field.name if hasattr(field, "name") else str(field)
-            if col_name not in pk_names and name not in pk_names:
-                filtered_include.append(col_name)
-        if not filtered_include:
-            return ""
-        columns = [self.quote_name(col) for col in filtered_include]
+            if col_name in pk_names or name in pk_names:
+                raise NotSupportedError(
+                    f"Cloud Spanner does not support storing the primary key column '{col_name}' "
+                    f"in a covering index as it is automatically included in all secondary indexes."
+                )
+        columns = [
+            self.quote_name(field.column if hasattr(field, "column") else str(field))
+            for field in include
+        ]
         return self.sql_create_index_include % {"columns": ", ".join(columns)}

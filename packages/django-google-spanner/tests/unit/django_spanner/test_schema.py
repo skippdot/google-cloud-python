@@ -471,17 +471,15 @@ class TestUtils(SpannerSimpleTestClass):
         sql = schema_editor._index_include_sql(Author, ["name", "last_name"])
         self.assertEqual(sql, " STORING (name, last_name)")
 
-    def test_index_include_sql_filters_primary_key(self):
-        """Tests _index_include_sql filters out primary key fields."""
+    def test_index_include_sql_raises_error_for_primary_key(self):
+        """Tests _index_include_sql raises NotSupportedError for primary key fields."""
         schema_editor = DatabaseSchemaEditor(self.connection)
-        sql = schema_editor._index_include_sql(Author, ["id", "name"])
-        self.assertEqual(sql, " STORING (name)")
-
-    def test_index_include_sql_all_pk_returns_empty(self):
-        """Tests _index_include_sql returns empty string when only PK is included."""
-        schema_editor = DatabaseSchemaEditor(self.connection)
-        sql = schema_editor._index_include_sql(Author, ["id"])
-        self.assertEqual(sql, "")
+        with self.assertRaises(NotSupportedError) as ctx:
+            schema_editor._index_include_sql(Author, ["id", "name"])
+        self.assertIn(
+            "Cloud Spanner does not support storing the primary key column",
+            str(ctx.exception),
+        )
 
     def test_index_include_sql_empty(self):
         """Tests _index_include_sql returns empty string when include is empty."""
