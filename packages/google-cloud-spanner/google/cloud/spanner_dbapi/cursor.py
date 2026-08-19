@@ -551,6 +551,7 @@ class Cursor(object):
             params,
             get_param_types(params),
             request_options=self.request_options,
+            data_boost_enabled=self.connection.data_boost_enabled,
         )
         # Read the first element so that the StreamedResultSet can
         # return the metadata after a DQL statement.

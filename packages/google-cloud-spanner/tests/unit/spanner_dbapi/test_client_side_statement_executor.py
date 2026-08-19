@@ -52,3 +52,48 @@ class TestParseUtils(unittest.TestCase):
                 )
             ),
         )
+
+
+class TestClientSideStatementExecutor(unittest.TestCase):
+    def test_execute_set_data_boost_enabled(self):
+        from unittest import mock
+        from google.cloud.spanner_dbapi.client_side_statement_executor import execute
+        from google.cloud.spanner_dbapi.exceptions import ProgrammingError
+
+        cursor = mock.MagicMock()
+        cursor.connection.is_closed = False
+        cursor.connection.data_boost_enabled = False
+
+        stmt = classify_statement("SET DATA_BOOST_ENABLED = TRUE")
+        res = execute(cursor, stmt)
+        self.assertIsNone(res)
+        self.assertTrue(cursor.connection.data_boost_enabled)
+
+        stmt = classify_statement("SET DATA_BOOST_ENABLED = FALSE")
+        res = execute(cursor, stmt)
+        self.assertIsNone(res)
+        self.assertFalse(cursor.connection.data_boost_enabled)
+
+        stmt = classify_statement("SET DATA_BOOST_ENABLED = INVALID")
+        with self.assertRaises(ProgrammingError):
+            execute(cursor, stmt)
+
+    def test_execute_show_data_boost_enabled(self):
+        from unittest import mock
+        from google.cloud.spanner_dbapi.client_side_statement_executor import execute
+
+        cursor = mock.MagicMock()
+        cursor.connection.is_closed = False
+        cursor.connection.data_boost_enabled = True
+
+        stmt = classify_statement("SHOW VARIABLE DATA_BOOST_ENABLED")
+        res = execute(cursor, stmt)
+        rows = list(res)
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0][0], "True")
+
+        cursor.connection.data_boost_enabled = False
+        res = execute(cursor, stmt)
+        rows = list(res)
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0][0], "False")

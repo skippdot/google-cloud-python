@@ -1005,7 +1005,33 @@ class TestCursor(unittest.TestCase):
         self.assertEqual(cursor._itr, MockedPeekIterator())
         self.assertEqual(cursor._row_count, None)
         mock_snapshot.execute_sql.assert_called_with(
-            sql, None, None, request_options=RequestOptions(priority=1)
+            sql,
+            None,
+            None,
+            request_options=RequestOptions(priority=1),
+            data_boost_enabled=False,
+        )
+
+    @mock.patch("google.cloud.spanner_dbapi.cursor.PeekIterator")
+    def test_handle_dql_data_boost_enabled(self, MockedPeekIterator):
+        connection = self._make_connection(
+            self.INSTANCE, mock.MagicMock(), data_boost_enabled=True
+        )
+        connection.database.snapshot.return_value.__enter__.return_value = (
+            mock_snapshot
+        ) = mock.MagicMock()
+
+        cursor = self._make_one(connection)
+
+        sql = "sql"
+        _result_set = mock.Mock()
+        mock_snapshot.execute_sql.return_value = _result_set
+        cursor._handle_DQL(sql, params=None)
+        self.assertEqual(cursor._result_set, _result_set)
+        self.assertEqual(cursor._itr, MockedPeekIterator())
+        self.assertEqual(cursor._row_count, None)
+        mock_snapshot.execute_sql.assert_called_with(
+            sql, None, None, request_options=None, data_boost_enabled=True
         )
 
     def test_handle_dql_database_error(self):
