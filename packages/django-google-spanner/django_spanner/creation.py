@@ -26,16 +26,16 @@ class DatabaseCreation(BaseDatabaseCreation):
             test_app = test_name.split(".")[0]
             # Importing a test app that isn't installed raises RuntimeError.
             if test_app in settings.INSTALLED_APPS:
+                test_case = import_string(test_case_name)
                 try:
-                    test_case = import_string(test_case_name)
                     method = getattr(test_case, method_name)
                     setattr(
                         test_case,
                         method_name,
                         skip("unsupported by Spanner")(method),
                     )
-                except (AttributeError, ImportError):
-                    # The test case or method might not exist in this version of Django.
+                except AttributeError:
+                    # The test method might not exist in this version of Django.
                     pass
 
     def create_test_db(self, *args, **kwargs):
