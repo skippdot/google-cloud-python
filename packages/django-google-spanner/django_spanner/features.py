@@ -212,6 +212,9 @@ class DatabaseFeatures(BaseDatabaseFeatures):
         "many_to_one_null.tests.ManyToOneNullTests.test_set_clear_non_bulk",
         "many_to_one_null.tests.ManyToOneNullTests.test_unsaved",
         "foreign_object.tests.MultiColumnFKTests.test_prefetch_foreignobject_reverse",
+        # Indexes tests
+        "indexes.tests.CoveringIndexTests.test_covering_index",
+        "indexes.tests.CoveringIndexTests.test_covering_partial_index",
         # Admin ChangeList tests
         "admin_changelist.tests.ChangeListTests.test_custom_lookup_in_search_fields",
         "admin_changelist.tests.ChangeListTests.test_deterministic_order_for_model_ordered_by_its_manager",
@@ -2274,9 +2277,6 @@ class DatabaseFeatures(BaseDatabaseFeatures):
         )
 
     django_6_0_skip_tests = (
-        # Indexes tests (upstream tests hardcode PostgreSQL's INCLUDE keyword)
-        "indexes.tests.CoveringIndexTests.test_covering_index",
-        "indexes.tests.CoveringIndexTests.test_covering_partial_index",
         # Spanner uses random int64 IDs; test assumes monotonic ordering matching insertion order.
         "prefetch_related.tests.PrefetchRelatedMTICacheTests.test_parent_m2m_available_in_child",
         # Client-side AutoField ID generation sets pk before save; _is_pk_set() triggers refresh_from_db instead of AttributeError.
